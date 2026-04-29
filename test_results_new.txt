@@ -1,0 +1,74 @@
+﻿
+   FAIL  Tests\Feature\Auth\AuthenticationTest
+  Ô£ô login screen cÔÇª 2.24s  
+  Ô¿» users can authÔÇª 0.33s  
+  Ô¿» users with twoÔÇª 0.02s  
+  Ô£ô users can notÔÇª  0.03s  
+  Ô¿» users can logoÔÇª 0.02s  
+  Ô¿» users are rateÔÇª 0.02s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FeaturÔÇª   
+  The user is not authenticated
+Failed asserting that false is true.
+
+  at tests\Feature\Auth\AuthenticationTest.php:23
+     19Ôûò         'email' => $user->email,
+     20Ôûò         'password' => 'password',
+     21Ôûò     ]);
+     22Ôûò 
+  Ô×£  23Ôûò     $this->assertAuthenticated();
+     24Ôûò     $response->assertRedirect(route('dashboard', absolute: false));
+     25Ôûò });
+     26Ôûò 
+     27Ôûò test('users with two factor enabled are redirected to two factor challenge', function () {
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FeaturÔÇª   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests\Feature\Auth\AuthenticationTest.php:48
+     44Ôûò         'email' => $user->email,
+     45Ôûò         'password' => 'password',
+     46Ôûò     ]);
+     47Ôûò 
+  Ô×£  48Ôûò     $response->assertRedirect(route('two-factor.login'));
+     49Ôûò     $response->assertSessionHas('login.id', $user->id);
+     50Ôûò     $this->assertGuest();
+     51Ôûò });
+     52Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FeaturÔÇª   
+  The user is authenticated
+Failed asserting that true is false.
+
+  at tests\Feature\Auth\AuthenticationTest.php:69
+     65Ôûò     $user = User::factory()->create();
+     66Ôûò 
+     67Ôûò     $response = $this->actingAs($user)->post(route('logout'));
+     68Ôûò 
+  Ô×£  69Ôûò     $this->assertGuest();
+     70Ôûò     $response->assertRedirect(route('home'));
+     71Ôûò });
+     72Ôûò 
+     73Ôûò test('users are rate limited', function () {
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FeaturÔÇª   
+  Expected response status code [429] but received 419.
+Failed asserting that 419 is identical to 429.
+
+  at tests\Feature\Auth\AuthenticationTest.php:83
+     79Ôûò         'email' => $user->email,
+     80Ôûò         'password' => 'wrong-password',
+     81Ôûò     ]);
+     82Ôûò 
+  Ô×£  83Ôûò     $response->assertTooManyRequests();
+     84Ôûò });
+     85Ôûò
+
+
+  Tests:    4 failed, 2 passed (6 assertions)
+  Duration: 2.85s
+

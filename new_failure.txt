@@ -1,0 +1,168 @@
+﻿
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+
+use Tests\TestCase;
+
+/*
+|--------------------------------------------------------------------------
+| Test Case
+|--------------------------------------------------------------------------
+|
+| The closure you provide to your test functions is always bound to a specific PHPUnit test
+| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
+| need to change it using the "pest()" function to bind a different classes or traits.
+|
+*/
+
+uses(TestCase::class, RefreshDatabase::class)->in('Feature');
+
+
+/*
+|--------------------------------------------------------------------------
+| Expectations
+|--------------------------------------------------------------------------
+|
+| When you're writing tests, you often need to check that values meet certain conditions. The
+| "expect()" function gives you access to a set of "expectations" methods that you can use
+| to assert different things. Of course, you may extend the Expectation API at any time.
+|
+*/
+
+expect()->extend('toBeOne', function () {
+    return $this->toBe(1);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Functions
+|--------------------------------------------------------------------------
+|
+| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
+| project that you don't want to repeat in every file. Here you can also expose helpers as
+| global functions to help you to reduce the number of lines of code in your test files.
+|
+*/
+
+function something()
+{
+    // ..
+}
+
+   FAIL  Tests\Feature\Auth\AuthenticationTest
+  Ô¿» login screen cÔÇª 0.02s  
+  Ô¿» users can authÔÇª 0.05s  
+  Ô¿» users with two factor enabled are redirected to two factor challenge
+  Ô¿» users can not authenticate with invalid password
+  Ô¿» users can logout
+  Ô¿» users are rate limited
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇª  Error   
+  Call to undefined method Tests\Feature\Auth\AuthenticationTest::get(). Did you forget to use the [pest()->extend()] function? Read more at: https://pestphp.com/docs/configuring-tests
+
+  at tests\Feature\Auth\AuthenticationTest.php:8
+      4Ôûò use Illuminate\Support\Facades\RateLimiter;
+      5Ôûò use Laravel\Fortify\Features;
+      6Ôûò 
+      7Ôûò test('login screen can be rendered', function () {
+  Ô×£   8Ôûò     $response = $this->get(route('login'));
+      9Ôûò 
+     10Ôûò     $response->assertOk();
+     11Ôûò });
+     12Ôûò
+
+  1   tests\Feature\Auth\AuthenticationTest.php:8
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAÔÇª  RuntimeException   
+  A facade root has not been set.
+
+  at vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+    356Ôûò     {
+    357Ôûò         $instance = static::getFacadeRoot();
+    358Ôûò 
+    359Ôûò         if (! $instance) {
+  Ô×£ 360Ôûò             throw new RuntimeException('A facade root has not been set.');
+    361Ôûò         }
+    362Ôûò 
+    363Ôûò         return $instance->$method(...$args);
+    364Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+  2   database\factories\UserFactory.php:31
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇª  Error   
+  Call to undefined method Tests\Feature\Auth\AuthenticationTest::skipUnlessFortifyHas(). Did you forget to use the [pest()->extend()] function? Read more at: https://pestphp.com/docs/configuring-tests
+
+  at tests\Feature\Auth\AuthenticationTest.php:29
+     25Ôûò     $response->assertRedirect(route('dashboard', absolute: false));
+     26Ôûò });
+     27Ôûò 
+     28Ôûò test('users with two factor enabled are redirected to two factor challenge', function () {
+  Ô×£  29Ôûò     $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
+     30Ôûò 
+     31Ôûò     Features::twoFactorAuthentication([
+     32Ôûò         'confirm' => true,
+     33Ôûò         'confirmPassword' => true,
+
+  1   tests\Feature\Auth\AuthenticationTest.php:29
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAÔÇª  RuntimeException   
+  A facade root has not been set.
+
+  at vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+    356Ôûò     {
+    357Ôûò         $instance = static::getFacadeRoot();
+    358Ôûò 
+    359Ôûò         if (! $instance) {
+  Ô×£ 360Ôûò             throw new RuntimeException('A facade root has not been set.');
+    361Ôûò         }
+    362Ôûò 
+    363Ôûò         return $instance->$method(...$args);
+    364Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+  2   database\factories\UserFactory.php:31
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAÔÇª  RuntimeException   
+  A facade root has not been set.
+
+  at vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+    356Ôûò     {
+    357Ôûò         $instance = static::getFacadeRoot();
+    358Ôûò 
+    359Ôûò         if (! $instance) {
+  Ô×£ 360Ôûò             throw new RuntimeException('A facade root has not been set.');
+    361Ôûò         }
+    362Ôûò 
+    363Ôûò         return $instance->$method(...$args);
+    364Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+  2   database\factories\UserFactory.php:31
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAÔÇª  RuntimeException   
+  A facade root has not been set.
+
+  at vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+    356Ôûò     {
+    357Ôûò         $instance = static::getFacadeRoot();
+    358Ôûò 
+    359Ôûò         if (! $instance) {
+  Ô×£ 360Ôûò             throw new RuntimeException('A facade root has not been set.');
+    361Ôûò         }
+    362Ôûò 
+    363Ôûò         return $instance->$method(...$args);
+    364Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:360
+  2   database\factories\UserFactory.php:31
+
+
+  Tests:    6 failed (0 assertions)
+  Duration: 0.24s
+
