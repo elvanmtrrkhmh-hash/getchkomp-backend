@@ -12,16 +12,20 @@ use Illuminate\Support\Str;
 class Order extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id', 'order_number', 'total_amount', 'status', 'order_date',
         'shipping_address', 'payment_status',
+        'recipient_name', 'phone_number', 'city_district', 'postal_code',
+        'courier_notes', 'courier_name', 'shipping_service',
+        'estimated_arrival', 'shipping_cost', 'payment_method_name',
     ];
 
     protected static function booted(): void
     {
         static::creating(function (Order $order) {
             if (empty($order->order_number)) {
-                $order->order_number = 'ORD-' . now()->format('YmdHis') . '-' . Str::upper(Str::random(5));
+                $order->order_number = 'ORD-'.now()->format('YmdHis').'-'.strtoupper(Str::random(5));
             }
         });
     }
@@ -31,6 +35,7 @@ class Order extends Model
         return [
             'order_date' => 'datetime',
             'total_amount' => 'decimal:2',
+            'shipping_cost' => 'decimal:2',
         ];
     }
 

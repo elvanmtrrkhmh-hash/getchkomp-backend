@@ -39,6 +39,7 @@ export default function Index(props: any) {
                             <TableRow>
                                 <TableHead>ID</TableHead>
                                 <TableHead>Reviewer</TableHead>
+                                <TableHead>Product</TableHead>
                                 <TableHead>Rating</TableHead>
                                 <TableHead>Comment</TableHead>
                                 <TableHead>Date</TableHead>
@@ -48,13 +49,26 @@ export default function Index(props: any) {
                         <TableBody>
                             {items.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center py-8">No data found</TableCell>
+                                    <TableCell colSpan={7} className="text-center py-8">No data found</TableCell>
                                 </TableRow>
                             ) : items.map((item: any) => (
                                 <TableRow key={item.id}>
                                     <TableCell>{item.id}</TableCell>
-                                    <TableCell className="font-medium">{item.name}</TableCell>
-                                    <TableCell>{item.rating}</TableCell>
+                                    <TableCell className="font-medium">
+                                        <div className="flex flex-col">
+                                            <span>{item.user?.name || item.name}</span>
+                                            <span className="text-[10px] text-muted-foreground">{item.user?.email || 'Guest'}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <span className="text-xs font-bold text-primary">{item.product?.name || 'Unknown Product'}</span>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-1">
+                                            <span className="font-bold">{item.rating}</span>
+                                            <span className="text-amber-500">★</span>
+                                        </div>
+                                    </TableCell>
                                     <TableCell className="max-w-xs truncate">{item.comment}</TableCell>
                                     <TableCell>{item.date ? new Date(item.date).toLocaleDateString() : '-'}</TableCell>
                                     <TableCell className="text-right space-x-2 flex justify-end">

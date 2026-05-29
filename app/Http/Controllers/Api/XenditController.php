@@ -3,18 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
 use App\Models\Payment;
+use App\Services\XenditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class XenditController extends Controller
 {
+    protected XenditService $xenditService;
+
+    public function __construct(XenditService $xenditService)
+    {
+        $this->xenditService = $xenditService;
+    }
+
     /**
      * Handle the Xendit webhook callback.
      */
     public function webhook(Request $request)
     {
+        Log::info('Xendit Webhook Received:', $request->all());
         $callbackToken = $request->header('x-callback-token');
 
         if ($callbackToken !== config('services.xendit.callback_token')) {
@@ -31,10 +39,10 @@ class XenditController extends Controller
 
         $payload = $request->all();
         $externalId = $payload['external_id'] ?? null;
-        $status = $payload['status'] ?? null;
 
-        if (!$externalId) {
+        if (! $externalId) {
             Log::error('Xendit Webhook: Missing external_id', $payload);
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Missing external_id',
@@ -43,47 +51,46 @@ class XenditController extends Controller
 
         $payment = Payment::with('order')->where('external_id', $externalId)->first();
 
-        if (!$payment) {
+        if (! $payment) {
             Log::error('Xendit Webhook: Payment not found', ['external_id' => $externalId]);
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Payment not found',
             ], 404);
         }
 
-        // Avoid repeated processing for PAID status
-        if ($payment->status === Payment::STATUS_PAID) {
-            Log::info('Xendit Webhook: Payment already processed', ['external_id' => $externalId]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Payment already processed',
-            ]);
-        }
-
-        $payment->status = $status;
-        $payment->payment_channel = $payload['payment_channel'] ?? $payment->payment_channel;
-        $payment->payment_method = $payload['payment_method'] ?? $payment->payment_method;
-        $payment->payment_status = strtolower($status);
-        $payment->metadata = array_merge($payment->metadata ?? [], $payload);
-        $payment->save();
-
-        if ($status === 'PAID') {
-            $payment->order->update([
-                'payment_status' => 'paid',
-                'status' => 'completed',
-            ]);
-            Log::info('Xendit Webhook: Order marked as PAID', ['order_id' => $payment->order_id]);
-        } elseif ($status === 'EXPIRED') {
-            $payment->order->update([
-                'payment_status' => 'expired',
-                'status' => 'canceled',
-            ]);
-            Log::info('Xendit Webhook: Order marked as EXPIRED', ['order_id' => $payment->order_id]);
-        }
+        // Pass the webhook payload directly for immediate update
+        $this->xenditService->syncPayment($payment, $payload);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Webhook processed successfully',
         ]);
+    }
+
+    /**
+     * Sync payment status from Xendit (Fallback for when webhook fails)
+     */
+    public function syncPayment(string $externalId)
+    {
+        $payment = Payment::with('order')->where('external_id', $externalId)->first();
+
+        if (! $payment) {
+            return response()->json(['message' => 'Payment not found'], 404);
+        }
+
+        try {
+            $this->xenditService->syncPayment($payment);
+
+            return response()->json([
+                'message' => 'Payment synced successfully',
+                'data' => $payment->load('order'),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Manual Sync Failed:', ['error' => $e->getMessage()]);
+
+            return response()->json(['message' => 'Sync failed: '.$e->getMessage()], 500);
+        }
     }
 }

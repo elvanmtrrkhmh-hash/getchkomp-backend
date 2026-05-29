@@ -1,7 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import shipping from '@/routes/shipping';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,8 +17,9 @@ export default function Index(props: any) {
     const { delete: destroy } = useForm();
     const items = props['shippings']?.data || props['shippings'] || [];
 
+    // Ganti dengan endpoint backend nyata untuk delete
     const handleDelete = (id: number) => {
-        destroy(shipping.destroy(id).url);
+        destroy(`/api/shipping/${id}`);
     };
 
     return (
@@ -29,7 +29,7 @@ export default function Index(props: any) {
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Shipping</h1>
                     <Button asChild>
-                        <Link href={shipping.create().url}>Create Shipping</Link>
+                        <Link href="/shipping/create">Create Shipping</Link>
                     </Button>
                 </div>
 
@@ -59,7 +59,7 @@ export default function Index(props: any) {
                                     <TableCell>{item.shipping_date ? new Date(item.shipping_date).toLocaleDateString() : '-'}</TableCell>
                                     <TableCell className="text-right space-x-2 flex justify-end">
                                         <Button variant="outline" size="sm" asChild>
-                                            <Link href={shipping.edit(item.id).url}>Edit</Link>
+                                            <Link href={`/shipping/${item.id}/edit`}>Edit</Link>
                                         </Button>
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
@@ -92,6 +92,6 @@ export default function Index(props: any) {
 Index.layout = {
     breadcrumbs: [
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Shipping', href: shipping.index().url },
+        { title: 'Shipping', href: '/shipping' },
     ],
 };

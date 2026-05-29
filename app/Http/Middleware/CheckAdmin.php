@@ -17,13 +17,13 @@ class CheckAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (! Auth::check()) {
-            return redirect()->route('login');
+            return redirect('/');
         }
 
         if (Auth::user()->role !== 'admin') {
             Auth::logout();
 
-            return redirect()->route('login')->with('error', 'Anda tidak memiliki akses ke halaman ini');
+            return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman ini');
         }
 
         return $next($request);

@@ -12,7 +12,7 @@ class ReviewController extends Controller
 {
     public function index()
     {
-        $reviews = Review::latest()->paginate(10);
+        $reviews = Review::with(['user', 'product'])->latest()->paginate(10);
 
         return Inertia::render('Reviews/Index', ['reviews' => $reviews]);
     }
@@ -39,7 +39,7 @@ class ReviewController extends Controller
     public function edit(Review $review)
     {
         return Inertia::render('Reviews/Edit', [
-            'review'   => $review,
+            'review' => $review,
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     }

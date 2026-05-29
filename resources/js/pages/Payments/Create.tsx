@@ -41,14 +41,19 @@ export default function Create({ orders }: { orders: Option[] }) {
     };
 
     const methodOptions = [
-        { value: 'credit_card', label: 'Credit Card' },
+        { value: 'virtual_account', label: 'Virtual Account' },
         { value: 'bank_transfer', label: 'Bank Transfer' },
         { value: 'e_wallet', label: 'E-Wallet' },
+        { value: 'qris', label: 'QRIS' },
+        { value: 'credit_card', label: 'Credit Card/Debit' },
+        { value: 'direct_debit', label: 'Direct Debit' },
     ];
 
     const statusOptions = [
         { value: 'pending', label: 'Pending' },
         { value: 'paid', label: 'Paid' },
+        { value: 'expired', label: 'Expired' },
+        { value: 'canceled', label: 'Canceled' },
         { value: 'failed', label: 'Failed' },
     ];
 

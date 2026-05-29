@@ -3,13 +3,13 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-    Card, 
-    CardContent, 
-    CardDescription, 
-    CardFooter, 
-    CardHeader, 
-    CardTitle 
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle
 } from '@/components/ui/card';
 import {
     Select,
@@ -21,7 +21,6 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Truck, Calendar, Hash, Package, Clock, ArrowLeft, Save, PlusCircle } from 'lucide-react';
 import InputError from '@/components/input-error';
-import shipping from '@/routes/shipping';
 
 interface Option {
     id: number;
@@ -38,12 +37,12 @@ export default function Create({ orders }: { orders: Option[] }) {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(shipping.store().url);
+        // Ganti ini sesuai endpoint backend yang benar
+        post('/api/shipping');
     };
 
     const statusOptions = ['pending', 'shipped', 'delivered', 'returned'];
 
-    // Status color mapping for visual indicators
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'shipped': return 'text-blue-500';
@@ -57,14 +56,13 @@ export default function Create({ orders }: { orders: Option[] }) {
         <>
             <Head title="Create Shipping" />
             <div className="flex flex-col gap-8 p-6 mx-auto w-full max-w-4xl">
-                {/* Header Section */}
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">
                         <h1 className="text-3xl font-bold tracking-tight text-foreground">Logistics Management</h1>
                         <p className="text-muted-foreground text-sm">Create and track shipping records for customer orders.</p>
                     </div>
                     <Button variant="outline" asChild className="gap-2 focus:ring-2 focus:ring-primary/20 bg-background/50 hover:bg-background transition-all">
-                        <Link href={shipping.index().url}>
+                        <Link href="/shipping">
                             <ArrowLeft className="size-4" />
                             Back to List
                         </Link>
@@ -81,18 +79,17 @@ export default function Create({ orders }: { orders: Option[] }) {
                             Enter tracking details and delivery schedules to update logistics status.
                         </CardDescription>
                     </CardHeader>
-                    
+
                     <form onSubmit={submit}>
                         <CardContent className="space-y-8 pt-8 px-8 md:px-10">
-                            {/* Logistics Overview Section */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                                 <div className="space-y-3">
                                     <Label htmlFor="order_id" className="flex items-center gap-2 font-semibold text-sm">
                                         <Hash className="size-4 text-primary" />
                                         Associated Order
                                     </Label>
-                                    <Select 
-                                        value={data.order_id?.toString()} 
+                                    <Select
+                                        value={data.order_id?.toString()}
                                         onValueChange={(value) => setData('order_id', value)}
                                     >
                                         <SelectTrigger id="order_id" className="h-11 bg-background/50 focus:bg-background transition-all border-muted-foreground/20 hover:border-primary/40">
@@ -118,8 +115,8 @@ export default function Create({ orders }: { orders: Option[] }) {
                                         <Clock className="size-4 text-primary" />
                                         Shipping Status
                                     </Label>
-                                    <Select 
-                                        value={data.shipping_status} 
+                                    <Select
+                                        value={data.shipping_status}
                                         onValueChange={(value) => setData('shipping_status', value)}
                                     >
                                         <SelectTrigger id="shipping_status" className="h-11 bg-background/50 focus:bg-background transition-all border-muted-foreground/20 hover:border-primary/40 capitalize">
@@ -141,7 +138,6 @@ export default function Create({ orders }: { orders: Option[] }) {
 
                             <Separator className="opacity-50" />
 
-                            {/* Tracking Information Section */}
                             <div className="space-y-3 pt-2">
                                 <Label htmlFor="tracking_number" className="flex items-center gap-2 font-semibold text-sm">
                                     <Truck className="size-4 text-primary" />
@@ -162,7 +158,6 @@ export default function Create({ orders }: { orders: Option[] }) {
 
                             <Separator className="opacity-50" />
 
-                            {/* Timeline Schedule Section */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
                                 <div className="space-y-3">
                                     <Label htmlFor="shipping_date" className="flex items-center gap-2 font-semibold text-sm text-foreground">
@@ -196,10 +191,10 @@ export default function Create({ orders }: { orders: Option[] }) {
                         </CardContent>
 
                         <div className="px-8 pb-10 pt-4 md:px-10">
-                            <Button 
-                                type="submit" 
-                                size="lg" 
-                                className="w-full h-14 font-extrabold shadow-lg hover:shadow-xl active:scale-[0.98] transition-all bg-primary hover:bg-primary/90 text-primary-foreground gap-3 text-lg" 
+                            <Button
+                                type="submit"
+                                size="lg"
+                                className="w-full h-14 font-extrabold shadow-lg hover:shadow-xl active:scale-[0.98] transition-all bg-primary hover:bg-primary/90 text-primary-foreground gap-3 text-lg"
                                 disabled={processing}
                             >
                                 {processing ? (
@@ -225,7 +220,7 @@ export default function Create({ orders }: { orders: Option[] }) {
 Create.layout = {
     breadcrumbs: [
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Shipping', href: shipping.index().url },
-        { title: 'Create', href: shipping.create().url },
+        { title: 'Shipping', href: '/shipping' },
+        { title: 'Create', href: '/shipping/create' },
     ],
 };

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
 use App\Models\User;
+use App\Notifications\ReviewReminderNotification;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -46,7 +47,17 @@ class OrderController extends Controller
 
     public function update(UpdateOrderRequest $request, Order $order)
     {
+        $oldStatus = $order->status;
         $order->update($request->validated());
+        $newStatus = $order->status;
+
+        // Trigger review reminder if status changed to finished
+        $finishedStatuses = ['delivered', 'completed', 'success'];
+        if (! in_array($oldStatus, $finishedStatuses) && in_array($newStatus, $finishedStatuses)) {
+            if ($order->user) {
+                $order->user->notify(new ReviewReminderNotification($order));
+            }
+        }
 
         return redirect()->route('orders.index')->with('success', 'Order berhasil diperbarui.');
     }

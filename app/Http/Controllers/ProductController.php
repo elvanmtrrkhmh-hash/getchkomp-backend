@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\UploadedFile;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -33,6 +33,11 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
+        // 🔹 Fix price agar integer tanpa .999
+        if(isset($data['price'])){
+            $data['price'] = (int) str_replace(['.', ','], '', $data['price']);
+        }
+
         if ($request->hasFile('thumbnail')) {
             $data['thumbnail'] = $request->file('thumbnail')->store('products/thumbnails', 'public');
         }
@@ -40,12 +45,16 @@ class ProductController extends Controller
         if ($request->hasFile('images')) {
             $images = [];
             foreach ($request->file('images') as $file) {
-                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                if ($file instanceof UploadedFile) {
                     $images[] = $file->store('products/images', 'public');
                 }
             }
             $data['images'] = $images;
         }
+
+        // 🔹 Optional: manual Featured / Bestseller flag
+        $data['is_featured'] = $request->has('featured') ? 1 : 0;
+        $data['is_bestseller'] = $request->has('bestseller') ? 1 : 0;
 
         Product::create($data);
 
@@ -54,7 +63,9 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return Inertia::render('Products/Show', ['product' => $product]);
+        return Inertia::render('Products/Show', [
+            'product' => $product->load(['category', 'brand']),
+        ]);
     }
 
     public function edit(Product $product)
@@ -69,6 +80,11 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $data = $request->validated();
+
+        // 🔹 Fix price agar integer tanpa .999
+        if(isset($data['price'])){
+            $data['price'] = (int) str_replace(['.', ','], '', $data['price']);
+        }
 
         if ($request->hasFile('thumbnail')) {
             $data['thumbnail'] = $request->file('thumbnail')->store('products/thumbnails', 'public');
@@ -85,6 +101,10 @@ class ProductController extends Controller
         } else {
             unset($data['images']);
         }
+
+        // 🔹 Optional: manual Featured / Bestseller flag
+        $data['is_featured'] = $request->has('featured') ? 1 : 0;
+        $data['is_bestseller'] = $request->has('bestseller') ? 1 : 0;
 
         $product->update($data);
 

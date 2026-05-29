@@ -9,11 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payment extends Model
 {
     use HasFactory;
+
     // Status Constants
-    public const STATUS_PENDING = 'PENDING';
-    public const STATUS_PAID = 'PAID';
-    public const STATUS_EXPIRED = 'EXPIRED';
-    public const STATUS_FAILED = 'FAILED';
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_PAID = 'paid';
+
+    public const STATUS_EXPIRED = 'expired';
+
+    public const STATUS_FAILED = 'failed';
 
     protected $fillable = [
         'order_id',

@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Review extends Model
 {
     use HasFactory;
-    protected $fillable = ['product_id', 'name', 'rating', 'date', 'comment'];
+
+    protected $fillable = ['product_id', 'user_id', 'order_id', 'name', 'rating', 'date', 'comment'];
 
     protected function casts(): array
     {
@@ -22,5 +23,10 @@ class Review extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

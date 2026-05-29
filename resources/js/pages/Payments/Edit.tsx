@@ -34,10 +34,20 @@ export default function Edit({
     payment: any;
     orders: Option[];
 }) {
+    const normalizeStatus = (status: string) => {
+        const s = (status || "").toUpperCase();
+        if (s === 'PAID' || s === 'SETTLED' || s === 'SUCCESS') return 'paid';
+        if (s === 'PENDING') return 'pending';
+        if (s === 'EXPIRED') return 'expired';
+        if (s === 'FAILED') return 'failed';
+        if (s === 'CANCELED' || s === 'CANCELLED') return 'canceled';
+        return status?.toLowerCase() || 'pending';
+    };
+
     const { data, setData, put, processing, errors } = useForm<Record<string, any>>({
         order_id: payment.order_id || '',
         payment_method: payment.payment_method || 'credit_card',
-        payment_status: payment.payment_status || 'pending',
+        payment_status: normalizeStatus(payment.payment_status || 'pending'),
         payment_date: payment.payment_date ? payment.payment_date.replace(' ', 'T').slice(0, 16) : '',
     });
 
@@ -47,14 +57,19 @@ export default function Edit({
     };
 
     const methodOptions = [
-        { value: 'credit_card', label: 'Credit Card' },
+        { value: 'virtual_account', label: 'Virtual Account' },
         { value: 'bank_transfer', label: 'Bank Transfer' },
         { value: 'e_wallet', label: 'E-Wallet' },
+        { value: 'qris', label: 'QRIS' },
+        { value: 'credit_card', label: 'Credit Card/Debit' },
+        { value: 'direct_debit', label: 'Direct Debit' },
     ];
 
     const statusOptions = [
         { value: 'pending', label: 'Pending' },
         { value: 'paid', label: 'Paid' },
+        { value: 'expired', label: 'Expired' },
+        { value: 'canceled', label: 'Canceled' },
         { value: 'failed', label: 'Failed' },
     ];
 

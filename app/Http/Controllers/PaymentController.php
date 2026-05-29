@@ -6,15 +6,23 @@ use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Services\XenditService;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
 {
-    public function index()
+    public function index(XenditService $xenditService)
     {
-        $payments = Payment::latest()->paginate(10);
+        $payments = Payment::with('order')->latest()->paginate(10);
 
-        return Inertia::render('Payments/Index', ['payments' => $payments]);
+        // Proactive Sync: Sync pending payments in the current page
+        foreach ($payments as $payment) {
+            if ($payment->payment_status === 'pending') {
+                $xenditService->syncPayment($payment);
+            }
+        }
+
+        return Inertia::render('Payments/Index', ['payments' => $payments->fresh('order')]);
     }
 
     public function create()
@@ -40,7 +48,7 @@ class PaymentController extends Controller
     {
         return Inertia::render('Payments/Edit', [
             'payment' => $payment,
-            'orders'  => Order::orderBy('id', 'desc')->get(['id']),
+            'orders' => Order::orderBy('id', 'desc')->get(['id']),
         ]);
     }
 
